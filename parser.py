@@ -137,12 +137,14 @@ def parse_file( fname, edges, polygons, transform, screen, color ):
         elif line == 'scale':
             #print 'SCALE\t' + str(args)
             t = make_scale(float(args[0]), float(args[1]), float(args[2]))
-            matrix_mult(t, cstack[len(cstack)-1])
+            matrix_mult(cstack[len(cstack)-1], t)
+            cstack[len(cstack)-1] = t
 
         elif line == 'move':
             #print 'MOVE\t' + str(args)
             t = make_translate(float(args[0]), float(args[1]), float(args[2]))
-            matrix_mult(t, cstack[len(cstack)-1])
+            matrix_mult(cstack[len(cstack)-1], t)
+            cstack[len(cstack)-1] = t
 
         elif line == 'rotate':
             #print 'ROTATE\t' + str(args)
@@ -154,24 +156,21 @@ def parse_file( fname, edges, polygons, transform, screen, color ):
                 t = make_rotY(theta)
             else:
                 t = make_rotZ(theta)
-            matrix_mult(t, cstack[len(cstack)-1])
+            matrix_mult(cstack[len(cstack)-1], t)
+            cstack[len(cstack)-1] = t
 
         elif line == 'display' or line == 'pop' or line == 'push' or line == 'save':
 
             if line == 'display':
                 display(screen)
             elif line == 'pop':
-                print 'pop'
                 cstack.pop()
-                print cstack
             elif line == 'push':
-                print 'push'
                 temp = new_matrix()
                 for i in range(4):
                     for j in range(4):
                         temp[i][j] = cstack[len(cstack)-1][i][j]
                 cstack.append(temp)
-                print cstack
             else:
                 save_extension(screen, args[0])
         c+= 1
